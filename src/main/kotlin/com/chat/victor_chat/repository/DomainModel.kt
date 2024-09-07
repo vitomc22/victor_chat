@@ -1,12 +1,15 @@
 package com.chat.victor_chat.repository
 
 
+import jakarta.persistence.Entity
+import jakarta.persistence.Id
 import jakarta.persistence.Table
-import org.springframework.data.annotation.Id
+
 
 import java.time.Instant
 
 @Table(name = "MESSAGES")
+@Entity
 data class Message(
     val content: String,
     val contentType: ContentType,
