@@ -78,33 +78,35 @@ class VictorChatApplicationTests {
             assertThat(messages?.map {
                 with(it) {
                     copy(
-                        id = null,
-                        sent = sent.truncatedTo(ChronoUnit.MILLIS)
+                        id = null, sent = sent.truncatedTo(ChronoUnit.MILLIS)
                     )
                 }
             }).first().isEqualTo(
-                    MessageVM(
-                        "*testMessage*",
-                        UserVM("test", URL("http://test.com")),
-                        now.minusSeconds(2).truncatedTo(ChronoUnit.MILLIS)
-                    )
+                MessageVM(
+                    "*testMessage*",
+                    UserVM("test", URL("http://test.com")),
+                    now.minusSeconds(2).truncatedTo(ChronoUnit.MILLIS)
                 )
+            )
         }
 
         assertThat(messages?.map {
             with(it) {
                 copy(
-                    id = null,
-                    sent = sent.truncatedTo(ChronoUnit.MILLIS)
+                    id = null, sent = sent.truncatedTo(ChronoUnit.MILLIS)
                 )
             }
         }).containsSubsequence(
             MessageVM(
-                "**testMessage2**",
+                "*testMessage*",
+                UserVM("test", URL("http://test.com")),
+                now.minusSeconds(2).truncatedTo(ChronoUnit.MILLIS)
+            ), MessageVM(
+                "*testMessage2*",
                 UserVM("test1", URL("http://test.com")),
                 now.minusSeconds(1).truncatedTo(ChronoUnit.MILLIS)
             ), MessageVM(
-                "`testMessage3`", UserVM("test2", URL("http://test.com")), now.truncatedTo(ChronoUnit.MILLIS)
+                "*testMessage3*", UserVM("test2", URL("http://test.com")), now.truncatedTo(ChronoUnit.MILLIS)
             )
         )
     }
@@ -118,16 +120,16 @@ class VictorChatApplicationTests {
         )
 
         messageRepository.findAll().first { it.content.contains("HelloWorld") }.apply {
-                assertThat(this.copy(id = null, sent = sent.truncatedTo(ChronoUnit.MILLIS))).isEqualTo(
-                        Message(
-                            "`HelloWorld`",
-                            ContentType.PLAIN,
-                            now.plusSeconds(1).truncatedTo(ChronoUnit.MILLIS),
-                            "test",
-                            "http://test.com"
-                        )
-                    )
-            }
+            assertThat(this.copy(id = null, sent = sent.truncatedTo(ChronoUnit.MILLIS))).isEqualTo(
+                Message(
+                    "`HelloWorld`",
+                    ContentType.PLAIN,
+                    now.plusSeconds(1).truncatedTo(ChronoUnit.MILLIS),
+                    "test",
+                    "http://test.com"
+                )
+            )
+        }
     }
 
 }

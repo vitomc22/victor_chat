@@ -1,9 +1,7 @@
 package com.chat.victor_chat.repository
 
 
-import jakarta.persistence.Entity
-import jakarta.persistence.Id
-import jakarta.persistence.Table
+import jakarta.persistence.*
 
 
 import java.time.Instant
@@ -16,7 +14,7 @@ data class Message(
     val sent: Instant,
     val userName: String,
     val userAvatarImageLink: String,
-    @Id var id: String? = null
+    @Id @GeneratedValue(strategy = GenerationType.UUID) var id: String? = null
 )
 
 enum class ContentType {

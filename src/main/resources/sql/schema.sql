@@ -1,8 +1,8 @@
-CREATE TABLE IF NOT EXISTS messages (
-  id                     VARCHAR(60)  DEFAULT RANDOM_UUID() PRIMARY KEY,
-  content                VARCHAR      NOT NULL,
-  content_type           VARCHAR(128) NOT NULL,
-  sent                   TIMESTAMP    NOT NULL,
-  username               VARCHAR(60)  NOT NULL,
-  user_avatar_image_link VARCHAR(256) NOT NULL
+CREATE TABLE IF NOT EXISTS MESSAGES (
+  ID                     VARCHAR(60)  DEFAULT RANDOM_UUID() PRIMARY KEY,
+  CONTENT                VARCHAR      NOT NULL,
+  CONTENT_TYPE           VARCHAR(128) NOT NULL,
+  SENT                   TIMESTAMP    NOT NULL,
+  USERNAME               VARCHAR(60)  NOT NULL,
+  USER_AVATAR_IMAGE_LINK VARCHAR(256) NOT NULL
 );
