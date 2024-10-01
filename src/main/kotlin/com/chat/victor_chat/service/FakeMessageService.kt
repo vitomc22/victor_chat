@@ -2,7 +2,8 @@ import com.chat.victor_chat.service.MessageService
 import com.chat.victor_chat.service.MessageVM
 import com.chat.victor_chat.service.UserVM
 import com.github.javafaker.Faker
-
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import org.springframework.stereotype.Service
 import java.net.URL
 import java.time.Instant
@@ -24,28 +25,36 @@ class fakeMessageService : MessageService {
         )
     )
 
-    val usersQuotes: Map<String, () -> String> = mapOf(
-        "Shakespeare" to {Faker().shakespeare().hamletQuote().toString()},
-        "ChuckNorris" to { Faker().chuckNorris().fact() },
-        "Yoda" to { Faker().pokemon().name() })
+    val usersQuotes: Map<String, () -> String> =
+        mapOf("Shakespeare" to { Faker().shakespeare().hamletQuote().toString() },
+            "ChuckNorris" to { Faker().chuckNorris().fact() },
+            "Yoda" to { Faker().pokemon().name() })
 
-    override fun latest(): List<MessageVM> {
+    override suspend fun latest(): Flow<MessageVM> {
         val count = Random.nextInt(1, 15)
-        return (0..count).map {
-            val user = users.values.random()
-            val userQuote = usersQuotes.getValue(user.name).invoke()
+        return flow {
+            (0..count).map {
+                val user = users.values.random()
+                val userQuote = usersQuotes.getValue(user.name).invoke()
 
-            MessageVM(
-                userQuote, user, Instant.now(), Random.nextBytes(10).toString()
-            )
-        }.toList()
+                emit(
+                    MessageVM(
+                        userQuote, user, Instant.now(), Random.nextBytes(10).toString()
+                    )
+                )
+            }
+        }
     }
 
-    override fun after(lastMessageId: String): List<MessageVM> {
+    override suspend fun after(lastMessageId: String): Flow<MessageVM> {
         return latest()
     }
 
-    override fun post(message: MessageVM) {
+    override fun stream(): Flow<MessageVM> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun post(message: Flow<MessageVM>) {
         TODO("Not yet implemented")
     }
 }

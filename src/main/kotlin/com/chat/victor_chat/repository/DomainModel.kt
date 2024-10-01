@@ -1,9 +1,6 @@
 package com.chat.victor_chat.repository
 
-
 import jakarta.persistence.*
-
-
 import java.time.Instant
 
 @Table(name = "MESSAGES")
@@ -18,5 +15,5 @@ data class Message(
 )
 
 enum class ContentType {
-    PLAIN
+    PLAIN, MARKDOWN
 }

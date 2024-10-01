@@ -1,40 +1,31 @@
 package com.chat.victor_chat.service
 
+import com.chat.victor_chat.asViewModel
+import com.chat.victor_chat.mapToViewModel
 import com.chat.victor_chat.repository.ContentType
 import com.chat.victor_chat.repository.Message
 import com.chat.victor_chat.repository.MessageRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import org.springframework.context.annotation.Primary
 import org.springframework.stereotype.Service
-import java.net.URL
 
 @Service
 @Primary
-class PersistentMessageService(val messageRepository: MessageRepository) : MessageService {
+abstract class PersistentMessageService(val messageRepository: MessageRepository) : MessageService {
 
-    override fun latest(): List<MessageVM> = messageRepository.findLatest().map {
-        with(it) {
-            MessageVM(
-                content, UserVM(
-                    userName, URL(userAvatarImageLink)
-                ), sent, id
-            )
-        }
-    }
+    val sender: MutableSharedFlow<MessageVM> = MutableSharedFlow()
 
-    override fun after(lastMessageId: String): List<MessageVM> = messageRepository.findLatest(lastMessageId).map {
-        with(it) {
-            MessageVM(
-                content, UserVM(
-                    userName, URL(userAvatarImageLink)
-                ), sent, id
-            )
-        }
-    }
+    override suspend fun latest(): Flow<MessageVM> = messageRepository.findLatest().mapToViewModel()
 
-    override fun post(message: MessageVM) {
-        messageRepository.save(with(message) {
+    override suspend fun after(messageId: String): Flow<MessageVM> = messageRepository.findLatest(messageId).map {it.asViewModel()}
+
+    override suspend fun post(message: Flow<MessageVM>) {
+        messageRepository.save(with(message.first()) {
             Message(
-                content, ContentType.PLAIN, sent, user.name, user.avatarImageLink.toString()
+                content, ContentType.MARKDOWN, sent, user.name, user.avatarImageLink.toString()
             )
         })
     }
